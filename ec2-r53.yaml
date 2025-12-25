@@ -16,7 +16,7 @@
       security_group: "{{ sg_id }}"
       image_id: "{{ ami_id }}"
       tags:
-        Environment: Dev
+        Name: "{{ item }}"
     loop : "{{ instances }}"
     register : ec2_output
 
@@ -24,7 +24,7 @@
     ansible.builtin.debug:
       msg: "{{ ec2_output }}"
   
-  - name: Print Public Ip address
+  - name: print public ip
     ansible.builtin.debug:
       msg: "{{ item.instances[0].public_ip_addres }}"
     loop: "{{ ec2_output.results }}"
