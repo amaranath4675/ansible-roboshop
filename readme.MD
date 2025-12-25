@@ -1,4 +1,6 @@
-# Create Instance and R53
+# Configuring Roboshop using Ansible
+
+# Create Instance and update R53 records
 
 * Created Instance with t3.micro instance type
 * Get the private and public Ip address looping the results of instance
