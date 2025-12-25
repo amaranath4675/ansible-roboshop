@@ -55,7 +55,7 @@
       state: present
       overwrite: true
     loop: "{{ec2_output.results}}"
-    when: item.item = frontend
+    when: item.item == frontend
 
   
 
