@@ -6,14 +6,14 @@
     sg_id: sg-04a6373d80781814d
     zone_id: Z08394983VCGATLL8SRZA
     domain_name: "amaranath.fun"
-    instances: 
-    - mongodb
-    - redis
-    - rabbitmq
-    - catalogue
-    - mysql
-    - cart 
-    - user
+    # instances: 
+    # - mongodb
+    # - redis
+    # - rabbitmq
+    # - catalogue
+    # - mysql
+    # - cart 
+    # - user
   tasks:
   - name: create ec2 instance
     amazon.aws.ec2_instance:
