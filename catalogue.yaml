@@ -1,3 +1,78 @@
 - name: setup catalogue
   hosts: catalogue
-  
+  become: yes
+  tasks:
+    - name: Disable node js
+      ansible.builtin.dnf: dnf module disable nodejs -y
+
+    - name: enable node js 7
+      ansible.builtin.dnf: dnf module enable nodejs:20 -y
+
+    - name: install node js
+      ansible.builtin.package:
+       name: nodejs
+       state: present
+
+    - name: create user 
+      ansible.builtin.user:
+        name: roboshop
+        password: roboshop
+        system: yes
+        comment: roboshop system user
+        shell: /bin//sbin/nologin
+        home: /app
+
+    - name: delete /app directory if exists
+      ansible.builtin.file:
+        dir: /app
+        state: absent 
+
+    - name: delete /app directory if exists
+      ansible.builtin.file:
+        state: directory 
+        path: /app
+
+    - name: Delete catalogue file
+      ansible.builtin.file:
+        path: /tmp/catalogue.zip
+        state: absent
+
+    - name: download the code
+      ansible.builtin.get_url:
+        url: "https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip"
+        dest: "/tmp/catalogue.zip"
+
+    - name: unarchive the application
+      ansible.builtin.unarchive:
+        src: /tmp/catalogue-v3.zip
+        dest: /app
+        remote_src: yes # Tells Ansible the URL is remote, not on the controller
+
+    - name: install dependencies
+      community.general.npm:
+        path: /app
+    
+    - name: copy service file
+      ansible.builtin.copy:
+        src: catalogue.service
+        dest: /etc/systemd/system/catalogue.service
+
+    - name: install mongodb client
+      ansible.builtin.package:
+        name: mongodb-mongosh
+        state: present
+
+    - name: connnect to mongodb catalogue
+      ansible.builtin.command: mongosh mongodb.amaranath.fun --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
+      register: catalogue_output
+
+    - name: load products into mongodb
+      ansible.builtin.shell: mongosh --host mongodb.amaranath.fun </app/db/master-data.js
+      when: catalogue_output.stdout | int < 0
+
+    - name: deamon reaload
+      ansible.builtin.systemd_service:
+        state: started
+        daemon_reload: true
+        name: catalogue
+        enabled: yes
