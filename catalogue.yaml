@@ -13,13 +13,6 @@
       name: nodejs
       state: present
 
-  - name: set ownership of /app
-    ansible.builtin.file:
-      path: /app
-      owner: roboshop
-      group: roboshop
-      state: directory
-
   - name: create roboshop system user
     ansible.builtin.user:
       name: roboshop
@@ -78,12 +71,6 @@
   - name: connnect to mongodb catalogue
     ansible.builtin.command: mongosh mongodb.amaranath.fun --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
     register: catalogue_output
-
-  # - name: evaluate cataalogue database
-  #   community.mongodb.mongodb_shell:
-  #     login_host: mongodb.daws86s.fun
-  #     eval: db.getMongo().getDBNames().indexOf('catalogue')
-  #   register: catalogue_output
 
   # - name: print catalogue output
   #   ansible.builtin.debug:
