@@ -13,6 +13,13 @@
       name: nodejs
       state: present
 
+  - name: set ownership of /app
+    ansible.builtin.file:
+      path: /app
+      owner: roboshop
+      group: roboshop
+      state: directory
+
   - name: create roboshop system user
     ansible.builtin.user:
       name: roboshop
@@ -51,6 +58,7 @@
   - name: install dependencies
     community.general.npm:
       path: /app
+      state: present
 
   - name: copy catalogue service
     ansible.builtin.copy:
