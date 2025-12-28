@@ -20,6 +20,7 @@
       system: true
       shell: /sbin/nologin
       home: /app
+
   # Safe to remove directory, because 2nd time if we run it will download freshly. no error if does not exist
   - name: remove app directory
     ansible.builtin.file:
@@ -67,7 +68,7 @@
       state: present
 
   - name: connnect to mongodb catalogue
-    ansible.builtin.command: mongosh mongodb.daws86s.fun --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
+    ansible.builtin.command: mongosh mongodb.amaranath.fun --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
     register: catalogue_output
 
   # - name: evaluate cataalogue database
@@ -81,7 +82,7 @@
   #     msg: "{{ catalogue_output }}"
 
   - name: load products into mongodb
-    ansible.builtin.shell: mongosh --host mongodb.daws86s.fun </app/db/master-data.js
+    ansible.builtin.shell: mongosh --host mongodb.amaranath.fun </app/db/master-data.js
     when: catalogue_output.stdout | int < 0
 
   # - name: start and enable cataalogue
